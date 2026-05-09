@@ -1,0 +1,166 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+
+model Brand {
+  id        String   @id @default(uuid())
+  name      String   @unique @db.VarChar(100)
+  slug      String   @unique @db.VarChar(120)
+  country   String   @db.VarChar(100)
+  logoUrl   String?
+  logoPublicId String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  cars Car[]
+}
+
+model Car {
+  id                     String   @id @default(uuid())
+  brandId                String
+  name                   String   @db.VarChar(150)
+  model                  String   @db.VarChar(150)
+  year                   Int
+  registrationYear       Int?
+  engine                 String?  @db.VarChar(100)
+  engineCapacityCc       Int?
+  transmission           String?  @db.VarChar(50)
+  mileageKm              Int?
+  originCountry          String?  @db.VarChar(100)
+  color                  String?  @db.VarChar(100)
+  description            String?
+  price                  Decimal  
+  salePrice              Decimal? 
+  isOnSale               Boolean  @default(false)
+  isNewArrival           Boolean  @default(true)
+  newArrivalExpiresAt    DateTime @default(dbgenerated("now() + interval '7 days'"))
+  stockQuantity          Int      @default(1)
+  isFeatured             Boolean  @default(false)
+  featuredOrder          Int?
+  isActive               Boolean  @default(true)
+  createdAt              DateTime @default(now())
+  updatedAt              DateTime @updatedAt
+  brand  Brand @relation(fields: [brandId],references: [id],onDelete: Restrict) //Restrict : to prevent deletion of a brand if there are cars associated with it
+  images CarImage[]
+  specifications CarSpecification[]
+  interests CarInterest[] 
+  visitorEvents VisitorEvent[]
+} 
+
+model CarImage {
+  id        String   @id @default(uuid())
+  carId     String
+  imageUrl  String   @db.VarChar(255)
+  publicId  String   @unique
+  isPrimary Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  car Car @relation(fields: [carId],references: [id],onDelete: Cascade) //Cascade : to automatically delete images when a car is deleted
+@@index([carId])
+}
+
+model CarSpecification {
+  id String @id @default(uuid())
+  carId String
+  specs Json
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  car Car @relation(fields: [carId],references: [id],onDelete: Cascade) //Cascade : to automatically delete specifications when a car is deleted
+
+  @@index([carId])
+}
+
+model Review {
+  id                String   @id @default(uuid())
+  email             String   @db.VarChar(150)
+  username          String?  @db.VarChar(100)
+  rating            Int
+  comment           String?
+  isVerified        Boolean  @default(false)
+  verificationToken String?  @db.VarChar(255)
+  editTokenHash     String?  @db.VarChar(255)
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+}
+
+model CarInterest {
+   id          String   @id @default(uuid())
+  carId       String
+  email       String   @db.VarChar(150)
+  phoneNumber String?  @db.VarChar(20)
+  notified    Boolean  @default(false)
+  createdAt   DateTime @default(now())
+
+  car Car @relation(fields: [carId],references: [id],onDelete: Cascade) //Cascade : to automatically delete interests when a car is deleted
+  notifications NotificationLog[]
+
+  @@index([carId])
+  @@unique([carId, email]) // To prevent duplicate interests for the same car and email combination])
+}
+
+enum NotificationChannel {
+  email
+  whatsapp
+}
+
+model NotificationLog {
+  id         String   @id @default(uuid())
+  interestId String
+  channel    NotificationChannel
+  status     String?  @db.VarChar(50)
+  sentAt     DateTime?
+
+  interest CarInterest @relation(fields: [interestId],references: [id],onDelete: Cascade) //Cascade : to automatically delete notification logs when a car interest is deleted
+}
+
+model Admin {
+  id           String   @id @default(uuid())
+  email        String   @unique @db.VarChar(150)
+  passwordHash String
+  fullName     String   @db.VarChar(150)
+  role         String   @default("admin") @db.VarChar(50)
+  isPrimary    Boolean  @default(false)
+  isActive     Boolean  @default(true)
+  createdAt    DateTime @default(now())
+
+  passwordResets PasswordReset[]
+}
+
+model PasswordReset {
+  id        String   @id @default(uuid())
+  adminId   String
+  token     String   @db.VarChar(255)
+  expiresAt DateTime
+  used      Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  admin     Admin    @relation(fields: [adminId], references: [id], onDelete: Cascade)
+  
+  @@index([adminId])
+  }
+
+  model VisitorEvent {
+  id        String   @id @default(uuid())
+  eventType String   @db.VarChar(100)
+  page      String   @db.VarChar(255)
+  carId     String?
+  ipAddress String   @db.Inet
+  userAgent String?
+  createdAt DateTime @default(now())
+
+  car       Car?     @relation(fields: [carId], references: [id], onDelete: SetNull) // SetNull : to keep the event but remove the car association if a car is deleted  
+
+  @@index([carId])
+}

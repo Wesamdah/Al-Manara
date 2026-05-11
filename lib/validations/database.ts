@@ -239,6 +239,7 @@ export const adminResetPasswordInputSchema = z.object({
   email: z.string().email().max(150),
   otp: z.string().length(6),
   newPassword: z.string().min(8).max(100),
+  confirmNewPassword: z.string().min(8).max(100),
 });
 
 export const adminCreateInputSchema = adminSchema.pick({

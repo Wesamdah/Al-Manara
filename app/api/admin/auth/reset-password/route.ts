@@ -20,7 +20,14 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const { email, otp, newPassword } = validation.data;
+    const { email, otp, newPassword, confirmNewPassword } = validation.data;
+
+    if (newPassword !== confirmNewPassword) {
+      return NextResponse.json(
+        { message: "Passwords do not match" },
+        { status: 400 },
+      );
+    }
 
     const admin = await prisma.admin.findUnique({
       where: { email },

@@ -1,26 +1,161 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* BACKGROUND */
+  --background: #f8f9fa;
+  --foreground: #191c1d;
+
+  /* SURFACES */
+  --surface: #f8f9fa;
+  --surface-low: #f3f4f5;
+  --surface-high: #eceef0;
+  --surface-highest: #e1e3e4;
+  --surface-card: #ffffff;
+
+  /* BRAND */
+  --primary: #b8001d;
+  --primary-hover: #e11d2e;
+
+  --secondary: #555f6f;
+  --tertiary: #00627f;
+
+  /* TEXT */
+  --on-surface: #191c1d;
+  --on-surface-variant: #5f6368;
+
+  /* EFFECTS */
+  --outline: rgba(69, 72, 78, 0.2);
+
+  --glass-bg: rgba(248, 249, 250, 0.7);
+
+  --shadow-color: rgba(85, 95, 111, 0.05);
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+.dark {
+  /* BACKGROUND */
+  --background: #0d0e10;
+  --foreground: #e3e5ed;
+
+  /* SURFACES */
+  --surface: #121316;
+  --surface-low: #181a1d;
+  --surface-high: #1d2024;
+  --surface-highest: #23262b;
+  --surface-card: #181a1d;
+
+  /* BRAND */
+  --primary: #c6c6c7;
+  --primary-hover: #e5e7eb;
+
+  --secondary: #9b9ea3;
+  --tertiary: #ffe8bf;
+
+  /* TEXT */
+  --on-surface: #e3e5ed;
+  --on-surface-variant: #9ca3af;
+
+  /* EFFECTS */
+  --outline: rgba(69, 72, 78, 0.15);
+
+  --glass-bg: rgba(18, 19, 22, 0.6);
+
+  --shadow-color: rgba(227, 229, 237, 0.05);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
 }
 
 body {
+  min-height: 100vh;
+
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+
+  font-family: var(--font-inter);
+
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+}
+
+[dir="rtl"] body {
+  font-family: var(--font-arabic);
+}
+
+/* DISPLAY TYPOGRAPHY */
+
+.display-font {
+  font-family: var(--font-manrope);
+}
+
+/* GLASS CARD */
+
+.glass-card {
+  background: var(--glass-bg);
+
+  backdrop-filter: blur(20px);
+
+  border: 1px solid var(--outline);
+
+  border-radius: 1.25rem;
+}
+
+/* SURFACE CARD */
+
+.surface-card {
+  background: var(--surface-card);
+
+  border-radius: 1.25rem;
+}
+
+/* EDITORIAL GRID */
+
+.editorial-grid {
+  background-image: radial-gradient(
+    rgba(255, 255, 255, 0.05) 1px,
+    transparent 1px
+  );
+
+  background-size: 18px 18px;
+}
+
+.light .editorial-grid,
+:root .editorial-grid {
+  background-image: radial-gradient(rgba(0, 0, 0, 0.05) 1px, transparent 1px);
+}
+
+/* PREMIUM SHADOW */
+
+.ambient-shadow {
+  box-shadow: 0 20px 60px var(--shadow-color);
+}
+
+/* PREMIUM BUTTON */
+
+.primary-button {
+  background: linear-gradient(135deg, var(--primary), var(--primary-hover));
+
+  transition: all 200ms ease-in-out;
+}
+
+/* INPUT */
+
+.premium-input {
+  background: transparent;
+
+  border: none;
+
+  border-bottom: 1px solid var(--outline);
+
+  transition: all 200ms ease-in-out;
+}
+
+.premium-input:focus {
+  outline: none;
+
+  border-bottom: 2px solid var(--primary);
 }

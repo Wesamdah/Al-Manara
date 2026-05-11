@@ -1,0 +1,34 @@
+{
+  "auth": {
+    "brand": "AL-MANARA",
+    "subtitle": "Car Management System",
+    "loginTitle": "Login",
+    "email": "Email",
+    "password": "Password",
+    "rememberMe": "Remember me",
+    "forgotPassword": "Forgot password?",
+    "loginButton": "Login",
+    "emailPlaceholder": "admin@example.com",
+    "passwordPlaceholder": "••••••••",
+
+    "forgotTitle": "Forgot Password",
+    "forgotDescription": "Enter your email and we will send you an OTP code to reset your password.",
+    "sendOtpButton": "Send OTP",
+    "backToLogin": "Back to login",
+
+    "resetTitle": "Reset Password",
+    "resetDescription": "Enter the OTP code and your new password.",
+    "otp": "OTP Code",
+    "otpPlaceholder": "123456",
+    "newPassword": "New Password",
+    "confirmPassword": "Confirm Password",
+    "resetButton": "Reset Password"
+  },
+  "validation": {
+    "invalidEmail": "Invalid email address",
+    "passwordMin": "Password must be at least 8 characters",
+    "otpLength": "OTP must be 6 digits",
+    "confirmPasswordRequired": "Confirm password is required",
+    "passwordsNotMatch": "Passwords do not match"
+  }
+}

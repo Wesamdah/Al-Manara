@@ -14,6 +14,12 @@ import {
   LoginClientSchema,
 } from "@/lib/validations/auth-client";
 
+import { loginApi } from "@/lib/api/end-points/auth-api";
+
+import { showErrorToast } from "@/lib/utils/toast";
+
+import { useRouter } from "next/navigation";
+
 type LoginFormProps = {
   dict: {
     auth: {
@@ -41,6 +47,8 @@ export function LoginForm({ dict, locale }: LoginFormProps) {
 
   const schemas = createAuthValidationSchemas(dict.validation);
 
+  const router = useRouter();
+
   const {
     register,
     handleSubmit,
@@ -55,7 +63,23 @@ export function LoginForm({ dict, locale }: LoginFormProps) {
   });
 
   async function onSubmit(data: LoginClientSchema) {
-    console.log(data);
+    try {
+      const respone = await loginApi(data);
+      console.log("Login successful:", respone);
+
+      router.push(`/${locale}/admin/dashboard`);
+    } catch (error) {
+      if (error instanceof Error) {
+        showErrorToast(error.message);
+        return;
+      }
+
+      return showErrorToast(
+        isArabic
+          ? "حدث خطأ أثناء تسجيل الدخول"
+          : "An error occurred during login",
+      );
+    }
   }
 
   return (
@@ -95,8 +119,8 @@ export function LoginForm({ dict, locale }: LoginFormProps) {
         </Link>
       </div>
 
-      <PremiumButton type="submit">
-        {isSubmitting ? "Loading..." : dict.auth.loginButton}
+      <PremiumButton type="submit" loading={isSubmitting}>
+        {dict.auth.loginButton}
       </PremiumButton>
     </form>
   );

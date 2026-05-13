@@ -34,7 +34,6 @@ export const PremiumInput = forwardRef<HTMLInputElement, PremiumInputProps>(
   ) => {
     // const isArabic = document.documentElement.lang === "ar";
     const isArabic = locale === "ar";
-    typeof window !== "undefined" && document.documentElement.lang === "ar";
 
     const [typo, setTypo] = useState(type);
 
@@ -55,7 +54,9 @@ export const PremiumInput = forwardRef<HTMLInputElement, PremiumInputProps>(
           )}
 
           {Icon && (
-            <Icon className="absolute inset-0 top-1/2 h-5 w-5 -translate-y-1/2 text-[var(--secondary)]" />
+            <Icon
+              className={` ${isArabic ? "right-0" : "left-0"} absolute  top-1/2 h-5 w-5 -translate-y-1/2 text-[var(--secondary)]`}
+            />
           )}
 
           <input

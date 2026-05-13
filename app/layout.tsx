@@ -5,6 +5,8 @@ import localFont from "next/font/local";
 import "./globals.css";
 import { ThemeProvider } from "./components/theme/ThemeProvider";
 
+import { Toaster } from "sonner";
+
 const inter = Inter({
   subsets: ["latin"],
   variable: "--font-inter",
@@ -43,7 +45,11 @@ export default function RootLayout({
         `}
     >
       <body className="min-h-full flex flex-col">
-        <ThemeProvider>{children}</ThemeProvider>
+        <ThemeProvider>
+          {children}
+
+          <Toaster position="top-right" richColors closeButton />
+        </ThemeProvider>
       </body>
     </html>
   );

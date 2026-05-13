@@ -5,6 +5,14 @@ import { KeyRound, Lock } from "lucide-react";
 import { PremiumButton } from "../ui/PremiumButton";
 import { PremiumInput } from "../ui/PremiumInput";
 
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+
+import {
+  createAuthValidationSchemas,
+  type ResetPasswordClientSchema,
+} from "@/lib/validations/auth-client";
+
 type ResetPasswordFormProps = {
   dict: {
     auth: {
@@ -21,6 +29,13 @@ type ResetPasswordFormProps = {
 
       resetButton: string;
     };
+    validation: {
+      invalidEmail: string;
+      passwordMin: string;
+      otpLength: string;
+      confirmPasswordRequired: string;
+      passwordsNotMatch: string;
+    };
   };
 };
 
@@ -28,6 +43,27 @@ export function ResetPasswordForm({
   dict,
   locale,
 }: ResetPasswordFormProps & { locale: "en" | "ar" }) {
+  const { resetPasswordClientSchema } = createAuthValidationSchemas(
+    dict.validation,
+  );
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm<ResetPasswordClientSchema>({
+    resolver: zodResolver(resetPasswordClientSchema),
+    defaultValues: {
+      otp: "",
+      newPassword: "",
+      confirmNewPassword: "",
+    },
+  });
+
+  async function onSubmit(data: ResetPasswordClientSchema) {
+    console.log("Reset Password Data:", data);
+  }
+
   return (
     <div>
       <div className="mb-8 text-center">
@@ -40,33 +76,41 @@ export function ResetPasswordForm({
         </p>
       </div>
 
-      <form className="space-y-6">
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
         <PremiumInput
           label={dict.auth.otp}
-          name="otp"
           placeholder={dict.auth.otpPlaceholder}
           icon={KeyRound}
+          error={errors.otp?.message}
+          disabled={isSubmitting}
+          {...register("otp")}
         />
 
         <PremiumInput
           label={dict.auth.newPassword}
           type="password"
-          name="newPassword"
           placeholder={dict.auth.passwordPlaceholder}
           icon={Lock}
+          error={errors.newPassword?.message}
+          disabled={isSubmitting}
           locale={locale}
+          {...register("newPassword")}
         />
 
         <PremiumInput
           label={dict.auth.confirmPassword}
           type="password"
-          name="confirmPassword"
           placeholder={dict.auth.passwordPlaceholder}
           icon={Lock}
+          error={errors.confirmNewPassword?.message}
+          disabled={isSubmitting}
           locale={locale}
+          {...register("confirmNewPassword")}
         />
 
-        <PremiumButton type="submit">{dict.auth.resetButton}</PremiumButton>
+        <PremiumButton type="submit">
+          {isSubmitting ? "Loading..." : dict.auth.resetButton}
+        </PremiumButton>
       </form>
     </div>
   );
